@@ -1,0 +1,14 @@
+# Temp Project Files
+debug
+release
+Makefile*
+*_resource.rc
+.qmake.stash
+
+# Temp Build Files
+*~
+
+# Other Files
+greg
+*.txt
+*.json

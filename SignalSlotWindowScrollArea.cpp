@@ -83,10 +83,6 @@ SignalSlotWindowScrollArea::resizeEvent
   size = InEvent->size();
   width = size.width();
   height = size.height();
-  ApplicationConfiguration::MainApplicationLog->AddEntry(QString("%1 %2 %3").
-                                                         arg(__FILE__).
-                                                         arg(__FUNCTION__).
-                                                         arg(__LINE__));
   signalSlotWindow->resize(size);
   (void)height;
   (void)width;

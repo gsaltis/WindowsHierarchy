@@ -22,10 +22,13 @@
  * Function : WindowElementSignalSlot
  *****************************************************************************/
 WindowElementSignalSlot::WindowElementSignalSlot
-(QString InName, QColor InColor) : QWidget()
+(int InClassID, int InElementID, int InID, QString InName, QColor InColor) : QWidget()
 {
   name = InName;
   color = InColor;
+  classID = InClassID;
+  elementID = InElementID;
+  id = InID;
   resize(8, 8);
 }
 
@@ -54,6 +57,36 @@ WindowElementSignalSlot::SetName
 (QString InName)
 {
   name = InName;  
+}
+
+/*****************************************************************************!
+ * Function : GetClassID
+ *****************************************************************************/
+int
+WindowElementSignalSlot::GetClassID
+()
+{
+  return classID;
+}
+
+/*****************************************************************************!
+ * Function : GetElementID
+ *****************************************************************************/
+int
+WindowElementSignalSlot::GetElementID
+()
+{
+  return elementID;
+}
+
+/*****************************************************************************!
+ * Function : GetID
+ *****************************************************************************/
+int
+WindowElementSignalSlot::GetID
+()
+{
+  return id;
 }
 
 /*****************************************************************************!

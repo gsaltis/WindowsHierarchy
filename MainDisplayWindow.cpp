@@ -17,6 +17,8 @@
  *****************************************************************************/
 #include "MainDisplayWindow.h"
 #include "ApplicationConfiguration.h"
+#include "sqlite3.h"
+#include "Trace.h"
 
 /*****************************************************************************!
  * Function : MainDisplayWindow
@@ -59,8 +61,16 @@ MainDisplayWindow::Initialize()
 void
 MainDisplayWindow::InitializeSubWindows()
 {
+  int                                   n;
+  
   hierarchyWindow = NULL;
   signalSlotWindow = NULL;
+  n = sqlite3_open(filename.toStdString().c_str(), &windowsdb);
+  if ( n != SQLITE_OK ) {
+    ApplicationConfiguration::MainApplicationLog->AddEntry(QString("Could not open %1 : %2").
+                                                           arg(filename).
+                                                           arg(sqlite3_errstr(n)));
+  }
 }
 
 /*****************************************************************************!
@@ -84,32 +94,147 @@ void
 MainDisplayWindow::PopulateHierarchyWindow
 ()
 {
-  WindowElement*                        windowElement;
-  QFile                                 file(filename);
-  QString                               fileContents;
-  QStringList                           lines;
-  int                                   i;
+  QString                               selectStatement;
   int                                   n;
-  QString                               line;
-  
-  if ( ! file.open(QIODevice::ReadOnly) ) {
-    ApplicationConfiguration::StatusBar->showMessage(QString("Count not open %1").arg(filename), 10);
-    return;
-  }
-  fileContents = QString(file.readAll());
-  lines = fileContents.split("\n");
 
-  n = lines.count();
-  for ( i = 0 ; i < n ; i++ ) {
-    line = lines[i].trimmed();
-    if ( line.isEmpty() ) {
-      continue;
-    }
-    windowElement = new WindowElement(line);
-    hierarchyWindow->AddWindowElement(windowElement);
-    ApplicationConfiguration::WindowElements << windowElement;
+  selectStatement = QString("SELECT * FROM Windows;");
+
+  n = sqlite3_exec(windowsdb,
+                   selectStatement.toStdString().c_str(),
+                   PopulateHierarchyWindowCB,
+                   this,
+                   NULL);
+  if ( n != SQLITE_OK ) {
+    ApplicationConfiguration::MainApplicationLog->AddEntry(QString("sqlite3_exec() %1 : %2").
+                                                           arg(selectStatement).
+                                                           arg(sqlite3_errstr(n)));
   }
-  file.close();
+}
+
+/*****************************************************************************!
+ * Function : PopulateHierarchyWindowCB
+ *****************************************************************************/
+int
+MainDisplayWindow::PopulateHierarchyWindowCB
+(void* InPointer, int InColumnCount, char** InColumnValues, char** InColumnNames)
+{
+  int                                   n;
+  QString                               columnName;
+  QString                               columnValue;
+  QString                               name;
+  QString                               className;
+  int                                   level;
+  bool                                  transient;
+  int                                   classID;
+  int                                   elementID;
+  MainDisplayWindow*                    window;
+  WindowHierarchy*                      hierarchyWindow;
+  WindowElement*                        element;
+  sqlite3*                              windowdb;
+  
+  className     = QString();
+  classID       = 0;
+  elementID     = 0;
+  name          = QString();
+  level         = 0;
+  transient     = false;
+  
+  window = (MainDisplayWindow*)InPointer;
+  hierarchyWindow = window->GetHierarchWindow();
+  windowdb = window->GetWindowDB();
+  
+  for ( n = 0 ; n < InColumnCount ; n++ ) {
+    columnName  = QString(InColumnNames[n]);
+    columnValue = QString(InColumnValues[n]);
+
+    if ( columnName == "classid" ) {
+      classID = columnValue.toInt();
+    } else if ( columnName == "elementid" ) {
+      elementID = columnValue.toInt();
+    } else if ( columnName == "name" ) {
+      name = QString(columnValue);
+    } else if ( columnName == "classname" ) {
+      className = QString(columnValue);
+    } else if ( columnName == "level" ) {
+      level = columnValue.toInt();
+    } else if ( columnName == "transient" ) {
+      transient = columnValue.toInt() ? true : false;
+    }
+  }
+  element = new WindowElement(classID, elementID, name, className, level, transient);
+  ReadElementSlots(element, windowdb);
+  hierarchyWindow->AddWindowElement(element);
+  ApplicationConfiguration::WindowElements << element;
+  return 0;
+}
+
+/*****************************************************************************!
+ * Function : ReadElementSlots
+ *****************************************************************************/
+void
+MainDisplayWindow::ReadElementSlots
+(WindowElement* InElement, sqlite3* InWindowsDB)
+{
+  QString                               sqlstmt;
+  int                                   n;
+  
+  sqlstmt = QString("Select * from Slots where classid is %1 and elementid is %2").
+    arg(InElement->GetClassID()).
+    arg(InElement->GetElementID());
+  
+  n = sqlite3_exec(InWindowsDB,
+                   sqlstmt.toStdString().c_str(),
+                   ReadElementSlotsCB,
+                   InElement,
+                   NULL);
+  if ( n != SQLITE_OK ) {
+    ApplicationConfiguration::MainApplicationLog->AddEntry(QString("sqlite3_exec() %1 : %2").
+                                                           arg(sqlstmt).
+                                                           arg(sqlite3_errstr(n)));
+  }
+}
+
+/*****************************************************************************!
+ * Function : ReadElementSlotsCB
+ *****************************************************************************/
+int
+MainDisplayWindow::ReadElementSlotsCB
+(void* InPointer, int InColumnCount, char** InColumnValues, char** InColumnNames)
+{
+  int                                   n;
+  QString                               columnName;
+  QString                               columnValue;
+  int                                   classID;
+  int                                   elementID;
+  int                                   slotID;
+  QString                               name;
+  WindowElementSlot*                    elementSlot;
+  WindowElement*                        element;
+
+  element = (WindowElement*)InPointer;
+  classID = 0;
+  elementID = 0;
+  slotID = 0;
+  name = QString();
+  
+  for ( n = 0 ; n < InColumnCount ; n++ ) {
+    columnName  = QString(InColumnNames[n]);
+    columnValue = QString(InColumnValues[n]);
+
+
+    if ( columnName == "classid" ) {
+      classID = columnValue.toInt();
+    } else if ( columnName == "elementid" ) {
+      elementID = columnValue.toInt();
+    } else if ( columnName == "slotid" ) {
+      slotID = columnValue.toInt();
+    } else if ( columnName == "name" ) {
+      name = QString(columnValue);
+    }
+  }
+  elementSlot = new WindowElementSlot(classID, elementID, slotID, name);
+  element->AddWindowSlot(elementSlot);
+  return 0;
 }
 
 /*****************************************************************************!
@@ -158,4 +283,24 @@ MainDisplayWindow::SlotSelectSignalSlotWindow
 {
   hierarchyWindow->hide();
   signalSlotWindow->show();  
+}
+
+/*****************************************************************************!
+ * Function : GetHierarchWindow
+ *****************************************************************************/
+WindowHierarchy*
+MainDisplayWindow::GetHierarchWindow
+()
+{
+  return hierarchyWindow;
+}
+
+/*****************************************************************************!
+ * Function : GetWindowDB
+ *****************************************************************************/
+sqlite3*
+MainDisplayWindow::GetWindowDB
+()
+{
+  return windowsdb;
 }

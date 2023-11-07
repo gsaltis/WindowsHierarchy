@@ -52,6 +52,7 @@ MainWindow::~MainWindow
 void
 MainWindow::Initialize()
 {
+  setWindowIcon(QIcon(":/Images/MainWindowIcon.png"));
   setWindowTitle(SystemConfig::SystemName);  
 }
 

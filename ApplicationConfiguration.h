@@ -39,7 +39,8 @@ class ApplicationConfiguration
 
  //! Public Methods
  public :
-
+  static WindowElement*         FindWindowElementByIDs(int InClassID, int InElementID);
+  
  //! Public Data
  public :
   static QString                OrganizationName;

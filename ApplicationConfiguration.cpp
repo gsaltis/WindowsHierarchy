@@ -62,3 +62,25 @@ ApplicationConfiguration::initialize()
 {
 }
 
+/*****************************************************************************!
+ * Function : FindWindowElementByIDs
+ *****************************************************************************/
+WindowElement*
+ApplicationConfiguration::FindWindowElementByIDs
+(int InClassID, int InElementID)
+{
+  int                                   i;
+  int                                   n;
+  WindowElement*                        element;
+  
+  n = WindowElements.size();
+
+  for ( i = 0 ; i < n ; i++ ) {
+    element = WindowElements[i];
+    if ( element->GetClassID() == InClassID && element->GetElementID() == InElementID ) {
+      return element;
+    }
+  }
+  return NULL;
+}
+

@@ -9,9 +9,11 @@ QMAKE_LINK                      = @echo [LD] $@ && g++
 QMAKE_RC                        = @echo [RC] $@ && windres 
 
 QMAKE_LFLAGS_WINDOWS            += -mwindows
-#QMAKE_LFLAGS_WINDOWS            += -Wl,--subsystem,console
+#QMAKE_LFLAGS_WINDOWS           += -Wl,--subsystem,console
 
 QMAKE_CXXFLAGS                  += 
+
+QMAKE_CFLAGS                    += -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-implicit-fallthrough
 
 QMAKE_LIBS                      = 
 
@@ -24,11 +26,14 @@ QMAKE_TARGET_PRODUCT            = "WindowsHierarchy"
 
 QMAKE_TARGET_COPYRIGHT          = "Copyright (C) 2023 Greg Saltis"
 
+RESOURCES                       += WindowsHierarchy.qrc
+
 QT                              += core gui widgets
 
 DEFINES                         += \
 
 SOURCES                         += \
+                                   sqlite3.c                                    \
 				   ApplicationConfiguration.cpp                 \
 				   ApplicationLog.cpp                           \
 				   ApplicationLogDialog.cpp                     \
@@ -53,6 +58,7 @@ SOURCES                         += \
 				   main.cpp                                     \
 
 HEADERS                         += \
+                                   sqlite3.h                                    \
 				   ApplicationConfiguration.h                   \
 				   ApplicationLog.h                             \
 				   ApplicationLogDialog.h                       \

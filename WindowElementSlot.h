@@ -32,7 +32,7 @@ class WindowElementSlot : public WindowElementSignalSlot
 
  //! Constructors
  public :
-  WindowElementSlot             (QString InName);
+  WindowElementSlot             (int InClassID, int InElementID, int InID, QString InName);
 
  //! Destructor
  public :

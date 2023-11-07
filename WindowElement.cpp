@@ -31,15 +31,38 @@ WindowElement::WindowElement
  * Function : WindowElement
  *****************************************************************************/
 WindowElement::WindowElement
+(int InClassID, int InElementID, QString InName, QString InClassName, int InLevel, bool InTransient)
+{
+  Initialize();
+  Set(InClassID, InElementID, InName, InClassName, InLevel, InTransient);
+}
+
+/*****************************************************************************!
+ * Function : WindowElement
+ *****************************************************************************/
+WindowElement::WindowElement
 (QString InName, QString InClassName, int InLevel, bool InTransient) : QWidget()
 {
   Initialize();
+  Set(0, 0, InName, InClassName, InLevel, InTransient);
+}
+
+/*****************************************************************************!
+ * Function : Set
+ *****************************************************************************/
+void
+WindowElement::Set
+(int InClassID, int InElementID, QString InName, QString InClassName, int InLevel, bool InTransient)
+{
+  classID       = InClassID;
+  elementID     = InElementID;
   name          = InName;
   className     = InClassName;
   level         = InLevel;
   transient     = InTransient;
 }
 
+#if 0
 /*****************************************************************************!
  * Function : WindowElement
  *****************************************************************************/
@@ -121,6 +144,7 @@ WindowElement::WindowElement
     AddWindowSlot(elementSlot);
   }
 }
+#endif
 
 /*****************************************************************************!
  * Function : ~WindowElement
@@ -137,10 +161,12 @@ void
 WindowElement::Initialize
 ()
 {
-  name = QString("");
-  className = QString("");
-  level = 0;
-  transient = false;
+  classID       = 0;
+  elementID     = 0;
+  name          = QString("");
+  className     = QString("");
+  level         = 0;
+  transient     = false;
 }
 
 /*****************************************************************************!
@@ -269,16 +295,18 @@ WindowElement::SlotSignalPaint
   QSize                                 s;
   
   textSize = QSize(0, 0);
-  brush = QBrush(color);
-  pen = QPen(color.darker(300));
 
   text = name;
   if ( name.isEmpty() ) {
-    return textSize;
+    text = className;
+    color = QColor(128, 128, 255);
   }
   if ( text.isEmpty() ) {
     return textSize;
   }
+
+  brush = QBrush(color);
+  pen = QPen(color.darker(300));
 
   InPainter->setPen(pen);
   InPainter->setBrush(brush);
@@ -321,7 +349,7 @@ WindowElement::GetDrawSize
 
   text = name;
   if ( name.isEmpty() ) {
-    return textSize;
+    text = className;
   }
   if ( text.isEmpty() ) {
     return textSize;
@@ -332,6 +360,43 @@ WindowElement::GetDrawSize
   return rect.size();
 }
 
+/*****************************************************************************!
+ * Function : GetClassID
+ *****************************************************************************/
+int
+WindowElement::GetClassID
+()
+{
+  return classID;
+}
 
+/*****************************************************************************!
+ * Function : SetClassID
+ *****************************************************************************/
+void
+WindowElement::SetClassID
+(int InClassID)
+{
+  classID = InClassID;
+}
 
+/*****************************************************************************!
+ * Function : GetElementID
+ *****************************************************************************/
+int
+WindowElement::GetElementID
+()
+{
+  return elementID;
+}
+
+/*****************************************************************************!
+ * Function : SetElementID
+ *****************************************************************************/
+void
+WindowElement::SetElementID
+(int InElementID)
+{
+  elementID = InElementID;
+}
 

@@ -35,7 +35,7 @@ class WindowElement : public QWidget
  public :
   WindowElement                 ();
   WindowElement                 (QString InName, QString InClassName, int InLevel, bool InTransient = false);
-  WindowElement                 (QString InLine);
+  WindowElement                 (int InClassID, int InElementID, QString InName, QString InClassName, int InLevel, bool InTransient = false);
   
   //! Destructor
  public :
@@ -55,6 +55,10 @@ class WindowElement : public QWidget
   void                          AddWindowSlot           (WindowElementSlot* InWindowSlot);
   QSize                         SlotSignalPaint         (QPainter* InPainter, QPoint InLocation, QSize InSize);
   QSize                         GetDrawSize             ();
+  int                           GetClassID              ();
+  void                          SetClassID              (int InClassID);
+  int                           GetElementID            ();
+  void                          SetElementID            (int InElementID);
   
  //! Public Data
  public :
@@ -68,9 +72,12 @@ class WindowElement : public QWidget
  //! Private Methods
  private :
   void                          Initialize              ();
+  void                          Set                     (int InClassID, int InElementID, QString InName, QString InClassName, int InLevel, bool InTransient);
   
  //! Private Data
  private :
+  int                           classID;
+  int                           elementID;
   QString                       name;
   QString                       className;
   int                           level;

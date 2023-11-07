@@ -21,7 +21,8 @@
  * Function : WindowElementSlot
  *****************************************************************************/
 WindowElementSlot::WindowElementSlot
-(QString InName) : WindowElementSignalSlot(InName, QColor(0, 96, 192))
+(int InClassID, int InElementID, int InID, QString InName) :
+  WindowElementSignalSlot(InClassID, InElementID, InID, InName, QColor(0, 96, 192))
 {
 }
 

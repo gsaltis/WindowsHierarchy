@@ -31,18 +31,21 @@ class WindowElementSignalSlot : public QWidget
 
  //! Constructors
  public :
-  WindowElementSignalSlot           (QString InName, QColor InColor);
+  WindowElementSignalSlot       (int InClassID, int InElementID, int InID, QString InName, QColor InColor);
 
  //! Destructor
  public :
-  ~WindowElementSignalSlot          ();
+  ~WindowElementSignalSlot      ();
 
  //! Public Methods
  public :
   QString                       GetName                 (void);
   void                          SetName                 (QString InName);
   void                          Paint                   (QPainter* InPainter);
-
+  int                           GetClassID              ();
+  int                           GetElementID            ();
+  int                           GetID                   ();
+  
  //! Public Data
  public :
 
@@ -53,6 +56,9 @@ class WindowElementSignalSlot : public QWidget
  protected :
   QString                       name;
   QColor                        color;
+  int                           classID;
+  int                           elementID;
+  int                           id;
 
  //! Private Methods
  private :

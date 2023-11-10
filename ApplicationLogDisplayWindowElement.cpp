@@ -17,7 +17,6 @@
  *****************************************************************************/
 #include "ApplicationLogDisplayWindowElement.h"
 #include "ApplicationLogEntry.h"
-#include "Trace.h"
 
 /*****************************************************************************!
  * Function : ApplicationLogDisplayWindowElement

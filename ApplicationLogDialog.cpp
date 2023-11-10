@@ -19,7 +19,6 @@
  *****************************************************************************/
 #include "ApplicationLogDialog.h"
 #include "ApplicationConfiguration.h"
-#include "Trace.h"
 
 /*****************************************************************************!
  * Function : ApplicationLogDialog

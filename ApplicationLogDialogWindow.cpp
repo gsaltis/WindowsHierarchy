@@ -16,7 +16,6 @@
  * Local Headers
  *****************************************************************************/
 #include "ApplicationLogDialogWindow.h"
-#include "Trace.h"
 
 /*****************************************************************************!
  * Function : ApplicationLogDialogWindow

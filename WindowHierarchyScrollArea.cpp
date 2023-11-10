@@ -21,9 +21,10 @@
  * Function : WindowHierarchyScrollArea
  *****************************************************************************/
 WindowHierarchyScrollArea::WindowHierarchyScrollArea
-() : QScrollArea()
+(WindowElementList* InElements) : QScrollArea()
 {
   QPalette pal;
+  elements = InElements;
   pal = palette();
   pal.setBrush(QPalette::Window, QBrush(QColor(240, 240, 240)));
   setPalette(pal);
@@ -55,7 +56,7 @@ WindowHierarchyScrollArea::initialize()
 void
 WindowHierarchyScrollArea::CreateSubWindows()
 {
-  hierarchyWindow = new WindowHierarchyContainer();  
+  hierarchyWindow = new WindowHierarchyContainer(elements);
   setWidget(hierarchyWindow);
 }
 
@@ -94,4 +95,24 @@ WindowHierarchyScrollArea::AddWindowElement
 (WindowElement* InElement)
 {
   hierarchyWindow->AddWindowElement(InElement);
+}
+
+/*****************************************************************************!
+ * Function : GetElements
+ *****************************************************************************/
+WindowElementList*
+WindowHierarchyScrollArea::GetElements(void)
+{
+  return elements;  
+}
+
+/*****************************************************************************!
+ * Function : SetElements
+ *****************************************************************************/
+void
+WindowHierarchyScrollArea::SetElements
+(WindowElementList* InElements)
+{
+  elements = InElements;
+  hierarchyWindow->SetElements(elements);
 }

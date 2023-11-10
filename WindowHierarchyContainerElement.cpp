@@ -22,20 +22,11 @@
  * Function : WindowHierarchyContainerElement
  *****************************************************************************/
 WindowHierarchyContainerElement::WindowHierarchyContainerElement
-() : QWidget()
-{
-  windowElement = NULL;
-  initialize();
-}
-
-/*****************************************************************************!
- * Function : WindowHierarchyContainerElement
- *****************************************************************************/
-WindowHierarchyContainerElement::WindowHierarchyContainerElement
-(WindowElement* InWindowElement) : QWidget()
+(WindowElement* InWindowElement, WindowElementList* InElements) : QWidget()
 {
   QPalette pal;
   windowElement = InWindowElement;
+  elements = InElements;
   initialize();
 }
 
@@ -88,7 +79,7 @@ WindowHierarchyContainerElement::CreateSubWindows()
   //! Create label  
   NameLabel = new QLabel();
   NameLabel->setParent(this);
-  NameLabel->move(windowElement->GetLevel() * 10, 1);
+  NameLabel->move(0 * 10, 1);
   NameLabel->resize(200, height);
   NameLabel->setText(windowElement->GetName());
   NameLabel->setAlignment(Qt::AlignLeft);
@@ -102,7 +93,7 @@ WindowHierarchyContainerElement::CreateSubWindows()
   ClassNameLabel->setParent(this);
   ClassNameLabel->move(10, 1);
   ClassNameLabel->resize(100, height);
-  ClassNameLabel->setText(windowElement->GetClassName());
+  ClassNameLabel->setText(QString());
   ClassNameLabel->setAlignment(Qt::AlignLeft);
   ClassNameLabel->setFont(font);
   pal = ClassNameLabel->palette();
@@ -146,7 +137,7 @@ WindowHierarchyContainerElement::resizeEvent
   size = InEvent->size();
   width = size.width();
   
-  nameLabelX = windowElement->GetLevel() * 10;
+  nameLabelX = 0 * 10;
   nameLabelY = 1;
   nameLabelW = 200 - nameLabelX;
   nameLabelH = NameLabel->size().height();;
@@ -179,6 +170,9 @@ WindowHierarchyContainerElement::paintEvent
   int                                   x2;
   QRect                                 rect;
   int                                   width;
+  int                                   depth;
+
+  depth = elements->GetElementDepth(windowElement);
   
   if ( NULL == windowElement ) {
     return;
@@ -189,11 +183,30 @@ WindowHierarchyContainerElement::paintEvent
   painter.setPen(pen);
   painter.drawLine(0, y, x2, y);
 
-  color1 = color.darker(100 + windowElement->GetLevel() * 20);
+  color1 = color.darker(100 + depth * 20);
   painter.setBrush(QBrush(color1));
   painter.setPen(QPen(color1));
-  width = windowElement->GetLevel() * 10 - 3;
+  width = depth * 10 - 3;
   
   rect = QRect(1, 1, width, size().height() - 4);
   painter.drawRect(rect);
+}
+
+/*****************************************************************************!
+ * Function : GetElements
+ *****************************************************************************/
+WindowElementList*
+WindowHierarchyContainerElement::GetElements(void)
+{
+  return elements;  
+}
+
+/*****************************************************************************!
+ * Function : SetElements
+ *****************************************************************************/
+void
+WindowHierarchyContainerElement::SetElements
+(WindowElementList* InElements)
+{
+  elements = InElements;  
 }

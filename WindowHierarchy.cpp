@@ -21,9 +21,10 @@
  * Function : WindowHierarchy
  *****************************************************************************/
 WindowHierarchy::WindowHierarchy
-() : QFrame()
+(WindowElementList* InElements) : QFrame()
 {
   QPalette pal;
+  elements = InElements;
   pal = palette();
   pal.setBrush(QPalette::Window, QBrush(QColor(255, 255, 255)));
   setPalette(pal);
@@ -58,7 +59,7 @@ WindowHierarchy::initialize()
 void
 WindowHierarchy::CreateSubWindows()
 {
-  scrollArea = new WindowHierarchyScrollArea();  
+  scrollArea = new WindowHierarchyScrollArea(elements);
   scrollArea->setParent(this);
 }
 
@@ -101,4 +102,23 @@ WindowHierarchy::AddWindowElement
 (WindowElement* InElement)
 {
   scrollArea->AddWindowElement(InElement);
+}
+
+/*****************************************************************************!
+ * Function : GetElements
+ *****************************************************************************/
+WindowElementList*
+WindowHierarchy::GetElements(void)
+{
+  return elements;  
+}
+
+/*****************************************************************************!
+ * Function : SetElements
+ *****************************************************************************/
+void
+WindowHierarchy::SetElements
+(WindowElementList* InElements)
+{
+  elements = InElements;  
 }

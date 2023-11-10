@@ -1,11 +1,11 @@
 /*****************************************************************************
- * FILE NAME    : WindowHierarchyContainer.h
- * DATE         : November 01 2023
+ * FILE NAME    : WindowElementList.h
+ * DATE         : November 09 2023
  * PROJECT      : 
  * COPYRIGHT    : Copyright (C) 2023 by Gregory R Saltis
  *****************************************************************************/
-#ifndef _windowhierarchycontainer_h_
-#define _windowhierarchycontainer_h_
+#ifndef _windowelementlist_h_
+#define _windowelementlist_h_
 
 /*****************************************************************************!
  * Global Headers
@@ -17,34 +17,34 @@
 /*****************************************************************************!
  * Local Headers
  *****************************************************************************/
-#include "WindowHierarchyContainerElement.h"
 #include "WindowElement.h"
-#include "WindowElementList.h"
 
 /*****************************************************************************!
  * Exported Macros
  *****************************************************************************/
 
 /*****************************************************************************!
- * Exported Class : WindowHierarchyContainer
+ * Exported Class : WindowElementList
  *****************************************************************************/
-class WindowHierarchyContainer : public QWidget
+class WindowElementList : public QWidget
 {
   Q_OBJECT;
 
  //! Constructors
  public :
-  WindowHierarchyContainer      (WindowElementList* InElements);
+  WindowElementList             ();
 
  //! Destructor
  public :
-  ~WindowHierarchyContainer     ();
+  ~WindowElementList            ();
 
  //! Public Methods
  public :
-  void                          AddWindowElement        (WindowElement* InElement);
-  WindowElementList*            GetElements             (void);
-  void                          SetElements             (WindowElementList* InElements);
+  void                          AddElement              (WindowElement* InElement);
+  WindowElement*                FindElementByID         (int InID);
+  int                           GetElementDepth         (WindowElement* InElement);
+  int                           GetElementCount         ();
+  WindowElement*                GetElementByIndex       (int InIndex);
   
  //! Public Data
  public :
@@ -57,17 +57,11 @@ class WindowHierarchyContainer : public QWidget
 
  //! Private Methods
  private :
-  void                          initialize              ();
-  void                          CreateSubWindows        ();
-  void                          InitializeSubWindows    ();
-  void                          resizeEvent             (QResizeEvent* InEvent);
 
  //! Private Data
  private :
-  QList<WindowHierarchyContainerElement*>       elements;
+  QList<WindowElement*>         elements;
   
-  WindowElementList*            windowElements;
-
  //! Public Slots
  public slots :
 
@@ -79,4 +73,4 @@ class WindowHierarchyContainer : public QWidget
 
 };
 
-#endif /* _windowhierarchycontainer_h_*/
+#endif /* _windowelementlist_h_*/

@@ -34,8 +34,8 @@ class WindowElement : public QWidget
  //! Constructors
  public :
   WindowElement                 ();
-  WindowElement                 (QString InName, QString InClassName, int InLevel, bool InTransient = false);
-  WindowElement                 (int InClassID, int InElementID, QString InName, QString InClassName, int InLevel, bool InTransient = false);
+  WindowElement                 (QString InName, bool InTransient = false);
+  WindowElement                 (int InClassID, int InElementID, int InParentID, QString InName, bool InTransient = false);
   
   //! Destructor
  public :
@@ -59,6 +59,7 @@ class WindowElement : public QWidget
   void                          SetClassID              (int InClassID);
   int                           GetElementID            ();
   void                          SetElementID            (int InElementID);
+  int                           GetParentID             ();
   
  //! Public Data
  public :
@@ -72,18 +73,17 @@ class WindowElement : public QWidget
  //! Private Methods
  private :
   void                          Initialize              ();
-  void                          Set                     (int InClassID, int InElementID, QString InName, QString InClassName, int InLevel, bool InTransient);
+  void                          Set                     (int InClassID, int InElementID, int InParentID, QString InName, bool InTransient);
   
  //! Private Data
  private :
-  int                           classID;
   int                           elementID;
+  int                           classID;
+  int                           parentID;
   QString                       name;
-  QString                       className;
-  int                           level;
-  bool                          transient;
   QList<WindowElementSignal*>   elementSignals;
   QList<WindowElementSlot*>     elementSlots;
+  bool                          transient;
 };
 
 #endif /* _windowelement_h_*/

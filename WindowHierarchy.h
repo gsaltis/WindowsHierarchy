@@ -19,6 +19,7 @@
  * Local Headers
  *****************************************************************************/
 #include "WindowHierarchyScrollArea.h"
+#include "WindowElementList.h"
 
 /*****************************************************************************!
  * Exported Macros
@@ -37,7 +38,7 @@ class WindowHierarchy : public QFrame
 
  //! Constructors
  public :
-  WindowHierarchy               ();
+  WindowHierarchy               (WindowElementList* InElements);
 
  //! Destructor
  public :
@@ -46,6 +47,8 @@ class WindowHierarchy : public QFrame
  //! Public Methods
  public :
   void                          AddWindowElement        (WindowElement* InElement);
+  WindowElementList*            GetElements             (void);
+  void                          SetElements             (WindowElementList* InElements);
 
  //! Public Data
  public :
@@ -66,6 +69,7 @@ class WindowHierarchy : public QFrame
  //! Private Data
  private :
   WindowHierarchyScrollArea*    scrollArea;
+  WindowElementList*            elements;
 
  //! Public Slots
  public slots :

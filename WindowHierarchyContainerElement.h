@@ -19,6 +19,7 @@
  * Local Headers
  *****************************************************************************/
 #include "WindowElement.h"
+#include "WindowElementList.h"
 
 /*****************************************************************************!
  * Exported Macros
@@ -34,8 +35,7 @@ class WindowHierarchyContainerElement : public QWidget
 
  //! Constructors
  public :
-  WindowHierarchyContainerElement ();
-  WindowHierarchyContainerElement (WindowElement* InWindowElement);
+  WindowHierarchyContainerElement (WindowElement* InWindowElement, WindowElementList * InElements);
 
  //! Destructor
  public :
@@ -43,6 +43,8 @@ class WindowHierarchyContainerElement : public QWidget
 
  //! Public Methods
  public :
+  WindowElementList*            GetElements             (void);
+  void                          SetElements             (WindowElementList* InElements);
 
  //! Public Data
  public :
@@ -65,8 +67,9 @@ class WindowHierarchyContainerElement : public QWidget
  private :
   QLabel*                       NameLabel;
   QLabel*                       ClassNameLabel;
-  WindowElement*                windowElement;
-  
+  WindowElement*                windowElement;  
+  WindowElementList*            elements;
+
  //! Public Slots
  public slots :
 

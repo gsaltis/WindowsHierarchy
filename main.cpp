@@ -8,6 +8,7 @@
 /*****************************************************************************!
  * Global Headers
  *****************************************************************************/
+#include "trace_winnet.h"
 #include <QtCore>
 #include <QApplication>
 #include <stdio.h>
@@ -65,6 +66,7 @@ main
   QString                               st;
   QStringList                           createDatabaseOptions;
 
+  TRACE_FUNCTION_START();
   ApplicationConfiguration::MainApplicationLog = log;
   application.setApplicationName(ApplicationConfiguration::ApplicationName);
   application.setApplicationVersion("0.0.0");

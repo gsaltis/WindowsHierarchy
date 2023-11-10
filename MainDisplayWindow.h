@@ -21,6 +21,7 @@
 #include "SignalSlotWindow.h"
 #include "sqlite3.h"
 #include "WindowElement.h"
+#include "WindowElementList.h"
 
 /*****************************************************************************!
  * Exported Macros
@@ -45,6 +46,7 @@ class MainDisplayWindow : public QWidget
  public :
   WindowHierarchy*              GetHierarchWindow       ();
   sqlite3*                      GetWindowDB             ();
+  WindowElementList*            GetElements             ();
   
  //! Public Data
  public :
@@ -62,22 +64,24 @@ class MainDisplayWindow : public QWidget
   void                          InitializeSubWindows    ();
   void                          CreateSubWindows        ();
   void                          PopulateHierarchyWindow ();
+  void                          ReadWindowElements      ();
   static void                   ReadElementSlots        (WindowElement* InElement, sqlite3* InWindowDB);
   
-  static int                    PopulateHierarchyWindowCB (void* InPointer,
-                                                           int InColumnCount,
-                                                           char** InColumnNames,
-                                                           char** InColumnValues);
-  static int                    ReadElementSlotsCB        (void* InPointer,
-                                                           int InColumnCount,
-                                                           char** InColumnNames,
-                                                           char** InColumnValues);
+  static int                    ReadWindowElementsCB    (void* InPointer,
+                                                         int InColumnCount,
+                                                         char** InColumnNames,
+                                                         char** InColumnValues);
+  static int                    ReadElementSlotsCB      (void* InPointer,
+                                                         int InColumnCount,
+                                                         char** InColumnNames,
+                                                         char** InColumnValues);
  //! Private Data
  private :
   WindowHierarchy*              hierarchyWindow;
   SignalSlotWindow*             signalSlotWindow;
   QString                       filename;
   sqlite3*                      windowsdb;
+  WindowElementList*            elements;
   
  //! Public Slots
  public slots :

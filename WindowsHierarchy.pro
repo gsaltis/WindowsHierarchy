@@ -15,7 +15,7 @@ QMAKE_CXXFLAGS                  +=
 
 QMAKE_CFLAGS                    += -Wno-unused-parameter -Wno-unused-but-set-variable -Wno-implicit-fallthrough
 
-QMAKE_LIBS                      = 
+QMAKE_LIBS                      = -lwsock32
 
 TARGET                          = WindowsHierarchy
 
@@ -33,7 +33,6 @@ QT                              += core gui widgets
 DEFINES                         += \
 
 SOURCES                         += \
-                                   sqlite3.c                                    \
 				   ApplicationConfiguration.cpp                 \
 				   ApplicationLog.cpp                           \
 				   ApplicationLogDialog.cpp                     \
@@ -48,6 +47,7 @@ SOURCES                         += \
 				   SignalSlotWindowScrollArea.cpp               \
 				   SystemConfig.cpp                             \
 				   WindowElement.cpp                            \
+				   WindowElementList.cpp                        \
 				   WindowElementSignal.cpp                      \
 				   WindowElementSignalSlot.cpp                  \
 				   WindowElementSlot.cpp                        \
@@ -56,9 +56,10 @@ SOURCES                         += \
 				   WindowHierarchyContainerElement.cpp          \
 				   WindowHierarchyScrollArea.cpp                \
 				   main.cpp                                     \
+				   sqlite3.c                                    \
+                                   trace.cpp                                    \
 
 HEADERS                         += \
-                                   sqlite3.h                                    \
 				   ApplicationConfiguration.h                   \
 				   ApplicationLog.h                             \
 				   ApplicationLogDialog.h                       \
@@ -73,6 +74,7 @@ HEADERS                         += \
 				   SignalSlotWindowScrollArea.h                 \
 				   SystemConfig.h                               \
 				   WindowElement.h                              \
+				   WindowElementList.h                          \
 				   WindowElementSignal.h                        \
 				   WindowElementSignalSlot.h                    \
 				   WindowElementSlot.h                          \
@@ -80,6 +82,8 @@ HEADERS                         += \
 				   WindowHierarchyContainer.h                   \
 				   WindowHierarchyContainerElement.h            \
 				   WindowHierarchyScrollArea.h                  \
+				   sqlite3.h                                    \
+                                   trace_winnet.h                               \
 
 FORMS                           += \
 

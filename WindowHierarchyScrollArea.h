@@ -20,6 +20,7 @@
  *****************************************************************************/
 #include "WindowHierarchyContainer.h"
 #include "WindowElement.h"
+#include "WindowElementList.h"
 
 /*****************************************************************************!
  * Exported Macros
@@ -38,7 +39,7 @@ class WindowHierarchyScrollArea : public QScrollArea
 
  //! Constructors
  public :
-  WindowHierarchyScrollArea     ();
+  WindowHierarchyScrollArea     (WindowElementList* InElements);
 
  //! Destructor
  public :
@@ -46,7 +47,10 @@ class WindowHierarchyScrollArea : public QScrollArea
 
  //! Public Methods
  public :
+  WindowElementList*            GetElements             (void);
+  void                          SetElements             (WindowElementList* InElements);
   void                          AddWindowElement        (WindowElement* InElement);
+
  //! Public Data
  public :
 
@@ -66,6 +70,7 @@ class WindowHierarchyScrollArea : public QScrollArea
  //! Private Data
  private :
   WindowHierarchyContainer*     hierarchyWindow;
+  WindowElementList*            elements;
 
  //! Public Slots
  public slots :

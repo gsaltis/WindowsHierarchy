@@ -8,6 +8,7 @@
 /*****************************************************************************!
  * Global Headers
  *****************************************************************************/
+#include "trace_winnet.h"
 #include <QtCore>
 #include <QtGui>
 #include <QWidget>
@@ -18,7 +19,6 @@
 #include "MainDisplayWindow.h"
 #include "ApplicationConfiguration.h"
 #include "sqlite3.h"
-#include "Trace.h"
 
 /*****************************************************************************!
  * Function : MainDisplayWindow
@@ -51,6 +51,7 @@ MainDisplayWindow::~MainDisplayWindow
 void
 MainDisplayWindow::Initialize()
 {
+  elements = new WindowElementList();
   InitializeSubWindows();  
   CreateSubWindows();
 }
@@ -79,8 +80,10 @@ MainDisplayWindow::InitializeSubWindows()
 void
 MainDisplayWindow::CreateSubWindows()
 {
-  hierarchyWindow = new WindowHierarchy();
+  ReadWindowElements();
+  hierarchyWindow = new WindowHierarchy(elements);
   hierarchyWindow->setParent(this);
+  hierarchyWindow->SetElements(elements);
   signalSlotWindow = new SignalSlotWindow();  
   signalSlotWindow->setParent(this);
   signalSlotWindow->hide();
@@ -88,20 +91,21 @@ MainDisplayWindow::CreateSubWindows()
 }
 
 /*****************************************************************************!
- * Function : PopulateHierarchyWindow
+ * Function : ReadWindowElements
  *****************************************************************************/
 void
-MainDisplayWindow::PopulateHierarchyWindow
+MainDisplayWindow::ReadWindowElements
 ()
 {
   QString                               selectStatement;
   int                                   n;
 
+  TRACE_FUNCTION_START();
   selectStatement = QString("SELECT * FROM Windows;");
 
   n = sqlite3_exec(windowsdb,
                    selectStatement.toStdString().c_str(),
-                   PopulateHierarchyWindowCB,
+                   ReadWindowElementsCB,
                    this,
                    NULL);
   if ( n != SQLITE_OK ) {
@@ -109,38 +113,37 @@ MainDisplayWindow::PopulateHierarchyWindow
                                                            arg(selectStatement).
                                                            arg(sqlite3_errstr(n)));
   }
+  TRACE_FUNCTION_END();
 }
 
 /*****************************************************************************!
- * Function : PopulateHierarchyWindowCB
+ * Function : ReadWindowElementsCB
  *****************************************************************************/
 int
-MainDisplayWindow::PopulateHierarchyWindowCB
+MainDisplayWindow::ReadWindowElementsCB
 (void* InPointer, int InColumnCount, char** InColumnValues, char** InColumnNames)
 {
   int                                   n;
   QString                               columnName;
   QString                               columnValue;
   QString                               name;
-  QString                               className;
-  int                                   level;
   bool                                  transient;
   int                                   classID;
   int                                   elementID;
+  int                                   parentID;
   MainDisplayWindow*                    window;
-  WindowHierarchy*                      hierarchyWindow;
   WindowElement*                        element;
   sqlite3*                              windowdb;
+  WindowElementList*                    elementList;
   
-  className     = QString();
   classID       = 0;
   elementID     = 0;
+  parentID      = 0;
   name          = QString();
-  level         = 0;
   transient     = false;
   
   window = (MainDisplayWindow*)InPointer;
-  hierarchyWindow = window->GetHierarchWindow();
+  elementList = window->GetElements();
   windowdb = window->GetWindowDB();
   
   for ( n = 0 ; n < InColumnCount ; n++ ) {
@@ -151,20 +154,17 @@ MainDisplayWindow::PopulateHierarchyWindowCB
       classID = columnValue.toInt();
     } else if ( columnName == "elementid" ) {
       elementID = columnValue.toInt();
+    } else if ( columnName == "parentid" ) {
+      parentID = columnValue.toInt();
     } else if ( columnName == "name" ) {
       name = QString(columnValue);
-    } else if ( columnName == "classname" ) {
-      className = QString(columnValue);
-    } else if ( columnName == "level" ) {
-      level = columnValue.toInt();
     } else if ( columnName == "transient" ) {
       transient = columnValue.toInt() ? true : false;
     }
   }
-  element = new WindowElement(classID, elementID, name, className, level, transient);
+  element = new WindowElement(classID, elementID, parentID, name, transient);
+  elementList->AddElement(element);
   ReadElementSlots(element, windowdb);
-  hierarchyWindow->AddWindowElement(element);
-  ApplicationConfiguration::WindowElements << element;
   return 0;
 }
 
@@ -236,6 +236,26 @@ MainDisplayWindow::ReadElementSlotsCB
   element->AddWindowSlot(elementSlot);
   return 0;
 }
+/*****************************************************************************!
+ * Function : PopulateHierarchyWindow
+ *****************************************************************************/
+void
+MainDisplayWindow::PopulateHierarchyWindow
+()
+{
+  WindowElement*                        element;
+  int                                   n;
+  int                                   i;
+  
+  TRACE_FUNCTION_START();
+  n = elements->GetElementCount();
+  TRACE_FUNCTION_INT(n);
+  for ( i = 0 ; i < n ; i++ ) {
+    element = elements->GetElementByIndex(i);
+    hierarchyWindow->AddWindowElement(element);
+  }
+  TRACE_FUNCTION_END();
+}
 
 /*****************************************************************************!
  * Function : resizeEvent
@@ -303,4 +323,14 @@ MainDisplayWindow::GetWindowDB
 ()
 {
   return windowsdb;
+}
+
+/*****************************************************************************!
+ * Function : GetElements
+ *****************************************************************************/
+WindowElementList*
+MainDisplayWindow::GetElements
+()
+{
+  return elements;
 }

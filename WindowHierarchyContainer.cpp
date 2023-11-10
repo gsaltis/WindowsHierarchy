@@ -22,9 +22,10 @@
  * Function : WindowHierarchyContainer
  *****************************************************************************/
 WindowHierarchyContainer::WindowHierarchyContainer
-() : QWidget()
+(WindowElementList* InElements) : QWidget()
 {
   QPalette pal;
+  windowElements = InElements;
   pal = palette();
   pal.setBrush(QPalette::Window, QBrush(QColor(240, 240, 240)));
   setPalette(pal);
@@ -106,8 +107,7 @@ WindowHierarchyContainer::AddWindowElement
   int                                   width;
   int                                   y;
   
-  element = new WindowHierarchyContainerElement(InElement);
-
+  element = new WindowHierarchyContainerElement(InElement, windowElements);
   width = size().width();
   y = elements.size() * WINDOW_HIERARCHY_CONTAINER_ELEMENT_HEIGHT;
   element->move(0, y);
@@ -115,4 +115,23 @@ WindowHierarchyContainer::AddWindowElement
   element->setParent(this);
   elements << element;
   
+}
+
+/*****************************************************************************!
+ * Function : GetElements
+ *****************************************************************************/
+WindowElementList*
+WindowHierarchyContainer::GetElements(void)
+{
+  return windowElements;  
+}
+
+/*****************************************************************************!
+ * Function : SetElements
+ *****************************************************************************/
+void
+WindowHierarchyContainer::SetElements
+(WindowElementList* InElements)
+{
+  windowElements = InElements;  
 }
